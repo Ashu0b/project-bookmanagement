@@ -1,9 +1,11 @@
 const bookModel = require('../models/bookModel');
 const { findOne } = require('../models/userModel');
 const userModel = require('../models/userModel');
+const reviewModel = require('../models/reviewModel')
 const validator = require('../utils/validator');
 
 
+//create book (POST)
 const createBook = async (req,res) => {
     try {
 
@@ -97,7 +99,7 @@ const createBook = async (req,res) => {
 }
 
 
-
+//get books(Query params/filters)
 const getBooks = async (req,res) => {
     try {
         let queryFilter = req.query;
@@ -116,17 +118,46 @@ const getBooks = async (req,res) => {
 
 }
 
+//get books (by ID/path params)
 const getBooksById = async (req,res) => {
     try {
 
     
         let {bookId:_id} = req.params;
+        
         const bookData = await bookModel.findById(_id);
        
         if(!bookData){
             return res.status(404).json({status:false, msg:`${_id} is not present in DB!`})
         }
-        res.status(200).json({ status: true, data:bookData });
+        
+        const reviews = await reviewModel.find();
+        let finalData = {bookData, reviews}
+        res.status(200).json({ status: true, data:finalData});
+
+    } catch (error) {
+        res.status(500).json({ status: false, error: error.message });
+    }
+}
+
+const deleteById = async (req,res)=>{
+    try {
+       let {bookId: _id} = req.params;
+       if(!_id){
+        return res.status(400).json({status:false, msg:`Invalid ID!`})
+       }
+       const checkID = await bookModel.findById(_id);
+       
+        if(!checkID){
+            return res.status(404).json({status:false, msg:`${_id} is not present in DB!`})
+        }
+        const idAlreadyDeleted = await bookModel.findOne({_id:_id});
+        if(idAlreadyDeleted.isDeleted === true){
+            return res.status(400).json({status:false, msg:`ID already deleted!`});
+        }
+       const bookData = await bookModel.findByIdAndUpdate({_id},{isDeleted:true},{new:true});
+
+       res.status(200).json({ status: true, data:bookData});
 
     } catch (error) {
         res.status(500).json({ status: false, error: error.message });
@@ -139,7 +170,8 @@ const getBooksById = async (req,res) => {
 module.exports = {
     createBook,
     getBooks,
-    getBooksById
+    getBooksById,
+    deleteById
 }
 
 
