@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { required } = require('nodemon/lib/config');
 
 const userSchema = new mongoose.Schema({
     title: {type:String, required:true, enum:['Mr', 'Mrs', 'Miss'], trim:true},

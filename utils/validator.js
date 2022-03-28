@@ -19,6 +19,10 @@ const isValidPassword = function (password){
     }
 
 }  
+const isValidISBN = function(ISBN){
+    if(ISBN.length === 13)
+    return true;
+}
 
 
 module.exports = {
@@ -26,7 +30,8 @@ module.exports = {
     isValidObjectId,
     isValidString,
     isValidTitle,
-    isValidPassword
+    isValidPassword,
+    isValidISBN
     
     
 }
