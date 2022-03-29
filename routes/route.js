@@ -13,6 +13,8 @@ router.get('/books', bookController.getBooks);
 
 router.get('/books/:bookId', bookController.getBooksById);
 
+router.put('/books/:bookId', bookController.updateBookById);
+
 router.delete('/books/:bookId', bookController.deleteById);
 
 
