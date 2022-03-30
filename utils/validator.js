@@ -25,12 +25,12 @@ const isValidISBN = function(ISBN){
 }
 
 const isValidRating = function(rating){
-    if(rating.length <= 5 && rating.length >= 1)
-    return true;
+    if(rating <= 5 && rating >= 1) return true
+    return false;
 }
 
 const isValidNumber = function(value){
-    if(typeof value === 'number' && value.trim().length === 0) return false;
+    if(isNaN(value)) return false;
     return true;
 }
 

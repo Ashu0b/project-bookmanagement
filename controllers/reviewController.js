@@ -91,9 +91,9 @@ const updateReview = async (req,res)=>{
                     return res.status(400).json({status:false, msg:`Invalid review format!`})
                 }
                 
-                // if(!validator.isValidNumber(rating)){
-                //     return res.status(400).json({status:false, msg:`Rating can't be empty!`})
-                // }
+                if(!validator.isValidNumber(rating)){
+                    return res.status(400).json({status:false, msg:`Invalid Rating Format!`})
+                }
                 
 
                 if(!validator.isValidRating(rating)){
@@ -114,8 +114,54 @@ const updateReview = async (req,res)=>{
     }
 }
 
+const deleteReviewById = async (req,res)=>{
+    try {
+        let bookId = req.params.bookId;
+        let reviewId = req.params.reviewId;
+        if(!validator.isValidObjectId(bookId)){
+            return res.status(400).json({status:false, msg:`Invalid Book ID!`})
+        }
+        const checkID = await bookModel.findById(bookId);
+           
+        if(!checkID){
+            return res.status(404).json({status:false, msg:`${bookId} is not present in DB!`})
+        }
+        const idAlreadyDeleted = await bookModel.findOne({_id: bookId});
+        if(idAlreadyDeleted.isDeleted === true){
+            return res.status(400).json({status:false, msg:`ID already deleted!`});
+        }
+        
+        if(!validator.isValidObjectId(reviewId)){
+            return res.status(400).json({status:false, msg:`Invalid Review ID!`})
+        }
+        const checkReviewID = await reviewModel.findById(reviewId);
+               
+        if(!checkReviewID){
+            return res.status(404).json({status:false, msg:`${reviewId} is not present in DB!`})
+        }
+        const reviewIdAlreadyDeleted = await reviewModel.findOne({_id:reviewId});
+        if(reviewIdAlreadyDeleted.isDeleted === true){
+            return res.status(400).json({status:false, msg:`Review with this ID is already deleted!`});
+        }
+        
+        
+
+        
+        const reviewData = await reviewModel.findByIdAndUpdate({_id:reviewId},{isDeleted:true},{new:true});
+
+       res.status(200).json({ status: true, data:reviewData}); 
+
+
+    } catch (error) {
+        res.status(500).json({ status: false, error: error.message });
+    }
+    
+
+}
 
 module.exports = {
     createReview,
-    updateReview
+    updateReview,
+    deleteReviewById
+
 }

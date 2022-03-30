@@ -3,6 +3,7 @@ const { findOne } = require('../models/userModel');
 const userModel = require('../models/userModel');
 const reviewModel = require('../models/reviewModel');
 const validator = require('../utils/validator');
+const jwt = require('jsonwebtoken');
 
 
 //create book (POST)
@@ -86,6 +87,7 @@ const createBook = async (req,res) => {
     if(!/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/.test(releasedAt)){
         return res.status(400).json({status:false, msg:`Invalid Date format!`});
     }
+
     
 
     const books = await bookModel.create(requestBody);
@@ -133,8 +135,17 @@ const getBooksById = async (req,res) => {
             return res.status(404).json({status:false, msg:`${_id} is not present in DB!`})
         }
         
-        const reviewsData = await reviewModel.find();
-        let finalData = {bookData, reviewsData}
+        const bookId = bookData._id 
+        const reviewsData = await reviewModel.find({bookId: bookId, isDeleted:false});
+        
+        
+        
+        const countOfReviews = reviewsData.length;
+    
+        
+        
+        let finalData = {bookData,reviewsData}
+        bookData.reviews = countOfReviews;
         res.status(200).json({ status: true, data:finalData});
 
     } catch (error) {
@@ -142,14 +153,14 @@ const getBooksById = async (req,res) => {
     }
 }
 
-const updateBookById = async (req, res)=> {
+const updateBookById = async (req, res) => {
     try {
         let {bookId: _id} = req.params;
         let requestBody = req.body;
         const {ISBN, title, releasedAt} = requestBody;
         
         if(!validator.isValidObjectId(_id)){
-            return res.status(400).json({status:false, msg:`Invalid ID!`})
+            return res.status(400).json({status:false, msg:`Invalid Book ID!`})
         }
     
         const checkID = await bookModel.findById(_id);
@@ -191,6 +202,23 @@ const updateBookById = async (req, res)=> {
         if(idAlreadyDeleted.isDeleted === true){
             return res.status(404).json({status:false, msg:`Book Not Found or Deleted!`});
         }
+
+        let token = req.headers["x-api-key"];
+        let decodedToken = jwt.verify(token, "thorium@group23");
+
+        let authorIdFromToken = req.query.userId;
+        if(!authorIdFromToken){
+            return res.status(400).json({status:false, msg:`User ID Query not present!`});
+        }
+        
+        let userLoggedIn = decodedToken.userId;
+        
+        if(authorIdFromToken != userLoggedIn){
+            return res.status(401).json({status:false, msg:`User not authorised to perform this action!`});
+        }
+        
+        
+
         const newData = await bookModel.findByIdAndUpdate({_id},requestBody, {new:true});
         res.status(201).json({status:true, msg:`Updated Successfully`, data:newData});
 
@@ -205,9 +233,10 @@ const deleteById = async (req,res)=>{
     try {
        let {bookId: _id} = req.params;
        if(!validator.isValidObjectId(_id)){
-        return res.status(400).json({status:false, msg:`Invalid ID!`})
+        return res.status(400).json({status:false, msg:`Invalid Book ID!`})
        }
        const checkID = await bookModel.findById(_id);
+       
        
         if(!checkID){
             return res.status(404).json({status:false, msg:`${_id} is not present in DB!`})
@@ -218,6 +247,30 @@ const deleteById = async (req,res)=>{
         if(idAlreadyDeleted.isDeleted === true){
             return res.status(400).json({status:false, msg:`ID already deleted!`});
         }
+
+        let token = req.headers["x-api-key"];
+        let decodedToken = jwt.verify(token, "thorium@group23");
+
+        let userIdFromToken = req.query.userId;
+        if(!userIdFromToken){
+            return res.status(400).json({status:false, msg:`User ID Query not present!`});
+        }
+        
+        let userLoggedIn = decodedToken.userId;
+       
+        
+       
+        if(userIdFromToken != userLoggedIn){
+            return res.status(401).json({status:false, msg:`User not authorised to perform this action!`});
+        }
+        
+
+        if(checkID._id !== checkID.userId){
+            console.log(checkID._id, checkID.userId );
+            return res.status(401).json({status:false, msg:`BookID Doesn't match with UserID!`});
+        } 
+        
+
        const bookData = await bookModel.findByIdAndUpdate({_id},{isDeleted:true},{new:true});
 
        res.status(200).json({ status: true, data:bookData});
