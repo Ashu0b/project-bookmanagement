@@ -245,7 +245,7 @@ const deleteById = async (req,res)=>{
     
         const idAlreadyDeleted = await bookModel.findOne({_id:_id});
         if(idAlreadyDeleted.isDeleted === true){
-            return res.status(400).json({status:false, msg:`ID already deleted!`});
+            return res.status(400).json({status:false, msg:`Book already deleted!`});
         }
 
         let token = req.headers["x-api-key"];
@@ -265,9 +265,9 @@ const deleteById = async (req,res)=>{
         }
         
 
-        if(checkID._id !== checkID.userId){
-            console.log(checkID._id, checkID.userId );
-            return res.status(401).json({status:false, msg:`BookID Doesn't match with UserID!`});
+        if(checkID.userId.toString() !== req.query.userId){
+            console.log(checkID.userId.toString(), req.query.userId );
+            return res.status(401).json({status:false, msg:`User not authorised to delete this book!`});
         } 
         
 
