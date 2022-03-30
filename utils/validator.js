@@ -24,6 +24,16 @@ const isValidISBN = function(ISBN){
     return true;
 }
 
+const isValidRating = function(rating){
+    if(rating.length <= 5 && rating.length >= 1)
+    return true;
+}
+
+const isValidNumber = function(value){
+    if(typeof value === 'number' && value.trim().length === 0) return false;
+    return true;
+}
+
 
 module.exports = {
     
@@ -31,7 +41,9 @@ module.exports = {
     isValidString,
     isValidTitle,
     isValidPassword,
-    isValidISBN
+    isValidISBN,
+    isValidRating,
+    isValidNumber
     
     
 }

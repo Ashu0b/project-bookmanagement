@@ -133,8 +133,8 @@ const getBooksById = async (req,res) => {
             return res.status(404).json({status:false, msg:`${_id} is not present in DB!`})
         }
         
-        const reviews = await reviewModel.find();
-        let finalData = {bookData, reviews}
+        const reviewsData = await reviewModel.find();
+        let finalData = {bookData, reviewsData}
         res.status(200).json({ status: true, data:finalData});
 
     } catch (error) {
@@ -159,7 +159,7 @@ const updateBookById = async (req, res)=> {
         }
         const isISBNAlreadyUsed = await bookModel.findOne({ ISBN:ISBN });
         if (isISBNAlreadyUsed) {
-        return res.status(400).send({ status: false, message: `${ISBN} is already exists!`});
+        return res.status(400).send({ status: false, message: `${ISBN} already exists!`});
         }
         if(!validator.isValidISBN(ISBN)){
             return res.status(400).json({status:false, msg:`Provide valid 13-digit ISBN!`});
@@ -180,9 +180,12 @@ const updateBookById = async (req, res)=> {
         if(!/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/.test(releasedAt)){
             return res.status(400).json({status:false, msg:`Invalid Date format!`});
         }
+        if(!requestBody.title){
+            return res.status(400).json({status:false, msg:`title is a mandatory field!`});
+        }
         const isTitleAlreadyUsed = await bookModel.findOne({ title:title });
         if (isTitleAlreadyUsed) {
-        return res.status(400).send({ status: false, message: `${title} is already exists! Give a Unique title...`});
+        return res.status(400).send({ status: false, message: `${title} already exists! Give a Unique title...`});
         }
         const idAlreadyDeleted = await bookModel.findOne({_id:_id});
         if(idAlreadyDeleted.isDeleted === true){
@@ -233,6 +236,7 @@ module.exports = {
     getBooksById,
     updateBookById,
     deleteById
+    
 }
 
 

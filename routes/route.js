@@ -2,11 +2,14 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 const bookController = require('../controllers/bookController');
+const reviewController = require('../controllers/reviewController')
 
+//User
 router.post('/register', userController.createUser);
 
 router.post('/login', userController.userLogin);
 
+//Books
 router.post('/books', bookController.createBook);
 
 router.get('/books', bookController.getBooks);
@@ -16,6 +19,11 @@ router.get('/books/:bookId', bookController.getBooksById);
 router.put('/books/:bookId', bookController.updateBookById);
 
 router.delete('/books/:bookId', bookController.deleteById);
+
+//Reviews
+router.post('/books/:bookId/review', reviewController.createReview);
+
+router.put('/books/:bookId/review/:reviewId', reviewController.updateReview);
 
 
 
