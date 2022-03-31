@@ -203,20 +203,17 @@ const updateBookById = async (req, res) => {
             return res.status(404).json({status:false, msg:`Book Not Found or Deleted!`});
         }
 
-        let token = req.headers["x-api-key"];
-        let decodedToken = jwt.verify(token, "thorium@group23");
+        
 
-        let authorIdFromToken = req.query.userId;
-        if(!authorIdFromToken){
+        let userId = req.query.userId;
+        if(!userId){
             return res.status(400).json({status:false, msg:`User ID Query not present!`});
         }
         
-        let userLoggedIn = decodedToken.userId;
-        
-        if(authorIdFromToken != userLoggedIn){
-            return res.status(401).json({status:false, msg:`User not authorised to perform this action!`});
-        }
-        
+        if(checkID.userId.toString() !== req.query.userId){
+            //console.log(checkID.userId.toString(), req.query.userId );
+            return res.status(401).json({status:false, msg:`User not authorised to delete this book!`});
+        } 
         
 
         const newData = await bookModel.findByIdAndUpdate({_id},requestBody, {new:true});
@@ -248,23 +245,12 @@ const deleteById = async (req,res)=>{
             return res.status(400).json({status:false, msg:`Book already deleted!`});
         }
 
-        let token = req.headers["x-api-key"];
-        let decodedToken = jwt.verify(token, "thorium@group23");
-
-        let userIdFromToken = req.query.userId;
-        if(!userIdFromToken){
+        //expecting userId in Query Params
+        const userId = req.query.userId;
+        if(!userId){
             return res.status(400).json({status:false, msg:`User ID Query not present!`});
         }
-        
-        let userLoggedIn = decodedToken.userId;
-       
-        
-       
-        if(userIdFromToken != userLoggedIn){
-            return res.status(401).json({status:false, msg:`User not authorised to perform this action!`});
-        }
-        
-
+        //Authorisation- Checking if the owner of book is the one making changes etc.
         if(checkID.userId.toString() !== req.query.userId){
             console.log(checkID.userId.toString(), req.query.userId );
             return res.status(401).json({status:false, msg:`User not authorised to delete this book!`});
