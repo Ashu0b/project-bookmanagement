@@ -11,15 +11,15 @@ router.post('/register', userController.createUser);
 router.post('/login', userController.userLogin);
 
 //Books
-router.post('/books', bookController.createBook);
+router.post('/books', middleware.auth, bookController.createBook);
 
-router.get('/books', bookController.getBooks);
+router.get('/books', middleware.auth, bookController.getBooks);
 
-router.get('/books/:bookId', bookController.getBooksById);
+router.get('/books/:bookId', middleware.auth, bookController.getBooksById);
 
 router.put('/books/:bookId', middleware.auth, bookController.updateBookById);
 
-router.delete('/books/:bookId',middleware.auth, bookController.deleteById);
+router.delete('/books/:bookId' ,middleware.auth, bookController.deleteById);
 
 //Reviews
 router.post('/books/:bookId/review', reviewController.createReview);
