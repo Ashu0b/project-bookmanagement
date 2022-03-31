@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { required } = require('nodemon/lib/config');
 
 const userSchema = new mongoose.Schema({
-    title: {type:String, required:true, enum:['Mr', 'Mrs', 'Miss'], trim:true},
+    title: {type:String, required:true, enum:{values:['Mr', 'Mrs', 'Miss'], message:"{VALUE} is not supported"}, trim:true},
     name: {type:String, required:true, trim:true},
     phone: {type:String, required:true, unique:true, match:/^[6-9]\d{9}$/, trim:true },
     email: {type:String, required:true, trim:true, unique:true, match:/^[^\s@]+@[^\s@]+\.[^\s@]+$/},
