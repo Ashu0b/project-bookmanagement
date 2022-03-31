@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     phone: {type:String, required:true, unique:true, match:/^[6-9]\d{9}$/, trim:true },
     email: {type:String, required:true, trim:true, unique:true, match:/^[^\s@]+@[^\s@]+\.[^\s@]+$/},
     password : {type:String, required:true, trim:true, minlength:8, maxlength:15},
-    address: {street: {type:String, trim:true}, city: {type:String, trim:true}, pincode: {type:String, trim:true}},
+    address: {street: {type:String, trim:true, required:true}, city: {type:String, trim:true, required:true}, pincode: {type:String, trim:true, required:true}},
 
 
 }, {timestamps:true});

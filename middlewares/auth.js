@@ -17,7 +17,7 @@ const auth = async (req, res, next) => {
         }
       }
     } catch (error) {
-      res.status(500).json({ msg: "Error", Error: error.message });
+      res.status(400).json({ msg: "Error", Error: error.message });
     }
   };
 
