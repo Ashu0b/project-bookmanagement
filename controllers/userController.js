@@ -177,7 +177,7 @@ const userLogin = async (req, res) => {
       {
         userId: findUser._id,
       },
-      "thorium@group23"
+      "thorium@group23", {expiresIn: '100mins'}
     );
 
     res.setHeader("x-api-key", token);

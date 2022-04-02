@@ -52,15 +52,7 @@ const createReview = async (req, res) => {
         .json({ status: false, msg: `Invalid! Please input valid rating.` });
     }
 
-    if (checkReviewID.bookId.toString() !== req.params.bookId) {
-      return res
-        .status(401)
-        .json({
-          status: false,
-          msg: `Can't perform this action. Check if Book is correct!`,
-        });
-    }
-
+  
     const reviewData = await reviewModel.create(requestBody);
     res
       .status(201)
@@ -102,13 +94,8 @@ const updateReview = async (req, res) => {
     if (!validator.isValidObjectId(reviewId)) {
       return res.status(400).json({ status: false, msg: `Invalid Review ID!` });
     }
-    const checkReviewID = await reviewModel.findById(reviewId);
+    
 
-    if (!checkReviewID) {
-      return res
-        .status(404)
-        .json({ status: false, msg: `${reviewId} is not present in DB!` });
-    }
     const reviewIdAlreadyDeleted = await reviewModel.findOne({ _id: reviewId });
     if (reviewIdAlreadyDeleted.isDeleted === true) {
       return res
@@ -138,14 +125,7 @@ const updateReview = async (req, res) => {
         .json({ status: false, msg: `Reviewer name is mandatory!` });
     }
 
-    if (checkReviewID.bookId.toString() !== req.params.bookId) {
-      return res
-        .status(401)
-        .json({
-          status: false,
-          msg: `Can't perform this action. Check if Book is correct!`,
-        });
-    }
+    
 
     const newData = await reviewModel.findByIdAndUpdate(
       { _id: reviewId },
@@ -205,14 +185,7 @@ const deleteReviewById = async (req, res) => {
         });
     }
 
-    if (checkReviewID.bookId.toString() !== req.params.bookId) {
-      return res
-        .status(401)
-        .json({
-          status: false,
-          msg: `Can't perform this action. Check if Book is correct!`,
-        });
-    }
+  
 
     const reviewData = await reviewModel.findByIdAndUpdate(
       { _id: reviewId },
