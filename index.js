@@ -7,8 +7,8 @@ app.use(express.json());
 app.use("/", route);
 
 try {
-  //insert your MONGO ATLAS string here :-
-  mongoose.connect("mongodb://0.0.0.0:27017/BOOK-MANAGEMENT", {
+  
+  mongoose.connect("mongodb+srv://As_357:oJAKh3z4S39UgaUZ@cluster0.k4tlh.mongodb.net/As_357", {
     useNewUrlParser: true,
   });
   console.log(`MongoDB connection successful`);

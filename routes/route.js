@@ -13,9 +13,9 @@ router.post("/login", userController.userLogin);
 //Books
 router.post("/books", middleware.auth, bookController.createBook);
 
-router.get("/books", middleware.auth, bookController.getBooks);
+router.get("/books",  bookController.getBooks);
 
-router.get("/books/:bookId", middleware.auth, bookController.getBooksById);
+router.get("/books/:bookId",  bookController.getBooksById);
 
 router.put("/books/:bookId", middleware.auth, bookController.updateBookById);
 
