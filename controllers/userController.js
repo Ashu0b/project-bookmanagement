@@ -176,8 +176,10 @@ const userLogin = async (req, res) => {
     const token = jwt.sign(
       {
         userId: findUser._id,
+        iat : Math.floor(Date.now()/1000),
+        exp:Math.floor(Date.now()/1000)+60*60*60
       },
-      "thorium@group23", {expiresIn: '100mins'}
+      "thorium@group23", 
     );
 
     res.setHeader("x-api-key", token);

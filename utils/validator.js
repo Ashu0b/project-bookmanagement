@@ -6,9 +6,10 @@ const isValidObjectId = function(objectId){
 
 const isValidString = function(value){
     if(typeof value === 'string' && value.trim().length === 0) return false;
+    if(typeof value ==='undefined' || value ===null) return false;
+    if(typeof value==='number'&& value.toString().trim().length===0)return false;
     return true;
 }
-
 const isValidTitle = function (title) {
     return ["Mr", "Mrs", "Miss"].indexOf(title) !== -1;
   };
