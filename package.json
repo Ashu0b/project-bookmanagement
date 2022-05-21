@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon index.js"
   },
-  "author": "ishvinder singh",
+  "author": "Ashis Bisoi",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.3",
